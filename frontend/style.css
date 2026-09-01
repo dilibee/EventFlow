@@ -1,153 +1,218 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
+    margin: 0;
+    min-height: 100vh;
 
-    margin:0;
-    min-height:100vh;
+    background: #0b0f19;
+    color: white;
 
-    background:
-    radial-gradient(circle at top,#3b2a00,#000);
-
-    color:white;
-
-    font-family:Georgia, serif;
-
-    text-align:center;
-
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 
-.page {
+/* MAIN APP */
 
-    padding:20px;
+.app {
+    min-height: 100vh;
 
+    display: flex;
+    flex-direction: column;
+
+    padding: 30px 20px;
 }
 
+
+/* HEADER */
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.brand {
+    color: #6c8cff;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 12px;
+}
 
 .header h1 {
+    margin: 0;
 
-    font-size:32px;
-    color:#d4af37;
-
+    font-size: 36px;
 }
-
 
 .header p {
+    margin-top: 12px;
 
-    color:#ddd;
-    letter-spacing:2px;
+    color: #9ca3af;
 
+    font-size: 16px;
 }
 
+
+/* MAIN CONTENT */
+
+main {
+    width: 100%;
+    max-width: 500px;
+
+    margin: 0 auto;
+
+    flex: 1;
+}
+
+
+/* SCANNER */
 
 .scanner-card {
+    background: #151a26;
 
-    margin:25px auto;
+    border: 1px solid #272d3d;
 
-    max-width:500px;
+    border-radius: 20px;
 
-    background:#111;
+    padding: 15px;
 
-    padding:15px;
-
-    border-radius:25px;
-
-    border:2px solid #d4af37;
-
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
-
 
 #reader {
+    width: 100%;
 
-    width:100%;
+    overflow: hidden;
 
+    border-radius: 14px;
 }
 
+
+/* STATUS */
 
 #status {
+    margin-top: 22px;
 
-    margin-top:20px;
+    text-align: center;
 
-    font-size:22px;
+    color: #aeb6c7;
 
-    color:#d4af37;
-
+    font-size: 17px;
 }
 
 
+/* FOOTER */
 
-/* FULL SCREEN RESULT */
+footer {
+    text-align: center;
+
+    color: #7d8597;
+
+    font-size: 14px;
+
+    margin-top: 30px;
+}
+
+.status-dot {
+    display: inline-block;
+
+    width: 8px;
+    height: 8px;
+
+    background: #22c55e;
+
+    border-radius: 50%;
+
+    margin-right: 6px;
+}
+
+
+/* RESULT OVERLAY */
 
 #resultOverlay {
+    position: fixed;
 
-    position:fixed;
+    top: 0;
+    left: 0;
 
-    top:0;
-    left:0;
+    width: 100vw;
+    height: 100vh;
 
-    width:100vw;
-    height:100vh;
+    display: none;
 
-    display:none;
-    overflow:hidden;
+    justify-content: center;
+    align-items: center;
 
-    justify-content:center;
+    padding: 30px;
 
-    align-items:center;
-
-    z-index:9999;
-
+    z-index: 9999;
 }
-
 
 #resultBox {
+    text-align: center;
 
-    text-align:center;
-
-    padding:40px;
-
+    max-width: 500px;
 }
-
-
 
 #resultTitle {
+    margin: 0;
 
-    font-size:60px;
-
+    font-size: 48px;
 }
-
 
 #resultName {
+    margin-top: 20px;
 
-    font-size:35px;
-
-    margin-top:20px;
-
+    font-size: 28px;
 }
 
 
-#resultGuests {
-
-    font-size:25px;
-
-    margin-top:15px;
-
-}
-
-
+/* SUCCESS */
 
 .approvedScreen {
+    display: flex !important;
 
-    display:flex !important;
-
-    background:#087f23;
-
+    background: #15803d;
 }
 
 
+/* ERROR / DENIED */
 
 .deniedScreen {
+    display: flex !important;
 
-    display:flex !important;
+    background: #b91c1c;
+}
 
-    background:#a00000;
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .app {
+        padding: 24px 16px;
+    }
+
+    .header h1 {
+        font-size: 30px;
+    }
+
+    .scanner-card {
+        padding: 10px;
+        border-radius: 16px;
+    }
+
+    #resultTitle {
+        font-size: 40px;
+    }
+
+    #resultName {
+        font-size: 24px;
+    }
 
 }
