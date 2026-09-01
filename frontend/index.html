@@ -2,7 +2,6 @@
 <html>
 
 <head>
-
     <title>EventFlow | Event Check-In</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,68 +9,125 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://unpkg.com/html5-qrcode"></script>
-
 </head>
+
 
 <body>
 
 <div class="app">
 
-    <header class="header">
 
-        <div class="brand">
-            EventFlow
+    <!-- EventFlow Brand -->
+    <header class="top-header">
+
+        <div class="brand-box">
+            EVENTFLOW
         </div>
 
-        <h1>Event Check-In</h1>
+        <h1 id="eventTitle">
+            EventFlow Demo Event
+        </h1>
 
-        <p>
-            Scan a guest's ticket to check them in.
+        <h2>
+            Event Check-In
+        </h2>
+
+        <p class="instructions">
+            Position the QR code inside the frame.
         </p>
 
     </header>
 
 
-    <main>
+
+    <!-- Scanner -->
+    <main class="scanner-section">
 
         <div class="scanner-card">
 
-            <div id="reader"></div>
+            <div class="scanner-frame">
+
+                <!-- Animated corner decorations -->
+                <span class="corner top-left"></span>
+                <span class="corner top-right"></span>
+                <span class="corner bottom-left"></span>
+                <span class="corner bottom-right"></span>
+
+                <div id="reader"></div>
+
+            </div>
 
         </div>
 
 
+        <!-- Camera / API Status -->
         <div id="status">
-            Ready to scan...
+            Starting camera...
+        </div>
+
+
+        <div id="connectionStatus" class="connection-status">
+
+            <span class="connection-dot"></span>
+
+            <span id="connectionText">
+                Connecting...
+            </span>
+
         </div>
 
     </main>
 
 
-    <footer>
 
-        <span class="status-dot"></span>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
 
-        System Online
+        <button
+            id="scanNav"
+            class="nav-button active"
+            type="button"
+        >
+            <span class="nav-icon">▣</span>
+            <span>Scan</span>
+        </button>
 
-    </footer>
+
+        <button
+            id="searchNav"
+            class="nav-button"
+            type="button"
+        >
+            <span class="nav-icon">⌕</span>
+            <span>Search</span>
+        </button>
+
+    </nav>
+
 
 </div>
 
 
-<!-- Full Screen Result -->
 
+<!-- Result Overlay -->
 <div id="resultOverlay">
 
-    <div id="resultBox">
+    <div id="resultCard">
+
+        <div id="resultIcon"></div>
 
         <h1 id="resultTitle"></h1>
 
-        <p id="resultName"></p>
+        <p id="resultTicket"></p>
+
+        <h2 id="resultName"></h2>
+
+        <p id="resultDetails"></p>
 
     </div>
 
 </div>
+
 
 
 <script src="scanner.js"></script>
