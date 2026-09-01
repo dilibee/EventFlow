@@ -4,8 +4,13 @@ let html5QrCode;
 let processing = false;
 
 
-// Start scanner
+// =========================
+// START SCANNER
+// =========================
+
 function startScanner() {
+
+    updateStatus("Starting camera...");
 
     html5QrCode = new Html5Qrcode("reader");
 
@@ -17,7 +22,7 @@ function startScanner() {
 
         {
             fps: 20,
-            qrbox: 300
+            qrbox: 280
         },
 
         (decodedText) => {
@@ -33,16 +38,24 @@ function startScanner() {
         },
 
         () => {
-            // Ignore scan errors while camera searches for a QR code
+            // Ignore normal scan errors
         }
 
     )
+    .then(() => {
+
+        updateStatus("Ready to scan...");
+
+        setConnectionStatus(true);
+
+    })
     .catch(error => {
 
         console.log(error);
 
-        document.getElementById("status").innerHTML =
-            "Camera failed to start.";
+        updateStatus("Camera failed to start.");
+
+        setConnectionStatus(false);
 
     });
 
@@ -50,57 +63,59 @@ function startScanner() {
 
 
 
-// Send ticket ID to EventFlow backend
+// =========================
+// CHECK TICKET
+// =========================
+
 function checkTicket(ticketID) {
 
-    document.getElementById("status").innerHTML =
-        "Checking ticket...";
+    updateStatus("Checking ticket...");
 
     fetch(API_URL + "?id=" + encodeURIComponent(ticketID))
 
-    .then(response => response.json())
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("API request failed");
+        }
+
+        return response.json();
+
+    })
 
     .then(data => {
 
+        setConnectionStatus(true);
+
+
         if (data.success) {
 
-            showResult(
-                true,
-                "APPROVED",
+            showSuccessResult(
+                ticketID,
+                data.name,
+                data.partySize
+            );
+
+        }
+
+        else if (data.message === "Already Checked In") {
+
+            showDuplicateResult(
                 data.name
             );
 
-            if (navigator.vibrate) {
-                navigator.vibrate(200);
-            }
+        }
 
-        } else {
+        else {
 
-            showResult(
-                false,
-                "DENIED",
+            showInvalidResult(
                 data.message
             );
-
-            if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200]);
-            }
 
         }
 
 
-        setTimeout(() => {
-
-            hideResult();
-
-            document.getElementById("status").innerHTML =
-                "Ready to scan...";
-
-            processing = false;
-
-            html5QrCode.resume();
-
-        }, 1500);
+        resetScannerAfterDelay();
 
     })
 
@@ -108,24 +123,11 @@ function checkTicket(ticketID) {
 
         console.log(error);
 
-        showResult(
-            false,
-            "ERROR",
-            "Unable to connect to EventFlow."
-        );
+        setConnectionStatus(false);
 
-        setTimeout(() => {
+        showConnectionError();
 
-            hideResult();
-
-            document.getElementById("status").innerHTML =
-                "Ready to scan...";
-
-            processing = false;
-
-            html5QrCode.resume();
-
-        }, 1500);
+        resetScannerAfterDelay();
 
     });
 
@@ -133,26 +135,168 @@ function checkTicket(ticketID) {
 
 
 
-// Show full-screen scan result
-function showResult(success, title, message) {
+// =========================
+// SUCCESS RESULT
+// =========================
+
+function showSuccessResult(ticketID, name, partySize) {
 
     const overlay =
         document.getElementById("resultOverlay");
 
-    overlay.className =
-        success ? "approvedScreen" : "deniedScreen";
+    overlay.className = "approvedScreen";
+
+
+    document.getElementById("resultIcon").innerHTML =
+        "✓";
+
 
     document.getElementById("resultTitle").innerHTML =
-        title;
+        "CHECK-IN COMPLETE";
+
+
+    document.getElementById("resultTicket").innerHTML =
+        "Ticket ID: " + ticketID;
+
 
     document.getElementById("resultName").innerHTML =
-        message;
+        name;
+
+
+    document.getElementById("resultDetails").innerHTML =
+        "Party Size: " + partySize;
 
 }
 
 
 
-// Hide result screen
+// =========================
+// DUPLICATE RESULT
+// =========================
+
+function showDuplicateResult(name) {
+
+    const overlay =
+        document.getElementById("resultOverlay");
+
+    overlay.className = "warningScreen";
+
+
+    document.getElementById("resultIcon").innerHTML =
+        "!";
+
+
+    document.getElementById("resultTitle").innerHTML =
+        "ALREADY CHECKED IN";
+
+
+    document.getElementById("resultTicket").innerHTML =
+        "";
+
+
+    document.getElementById("resultName").innerHTML =
+        name;
+
+
+    document.getElementById("resultDetails").innerHTML =
+        "No action required.";
+
+}
+
+
+
+// =========================
+// INVALID TICKET RESULT
+// =========================
+
+function showInvalidResult(message) {
+
+    const overlay =
+        document.getElementById("resultOverlay");
+
+    overlay.className = "deniedScreen";
+
+
+    document.getElementById("resultIcon").innerHTML =
+        "×";
+
+
+    document.getElementById("resultTitle").innerHTML =
+        "INVALID TICKET";
+
+
+    document.getElementById("resultTicket").innerHTML =
+        "";
+
+
+    document.getElementById("resultName").innerHTML =
+        message || "Guest Not Found";
+
+
+    document.getElementById("resultDetails").innerHTML =
+        "Please verify the ticket and try again.";
+
+}
+
+
+
+// =========================
+// CONNECTION ERROR
+// =========================
+
+function showConnectionError() {
+
+    const overlay =
+        document.getElementById("resultOverlay");
+
+    overlay.className = "deniedScreen";
+
+
+    document.getElementById("resultIcon").innerHTML =
+        "!";
+
+
+    document.getElementById("resultTitle").innerHTML =
+        "CONNECTION ERROR";
+
+
+    document.getElementById("resultTicket").innerHTML =
+        "";
+
+
+    document.getElementById("resultName").innerHTML =
+        "Unable to reach EventFlow.";
+
+
+    document.getElementById("resultDetails").innerHTML =
+        "Check your connection and try again.";
+
+}
+
+
+
+// =========================
+// RESET SCANNER
+// =========================
+
+function resetScannerAfterDelay() {
+
+    setTimeout(() => {
+
+        hideResult();
+
+        updateStatus("Ready to scan...");
+
+        processing = false;
+
+        html5QrCode.resume();
+
+    }, 2000);
+
+}
+
+
+
 function hideResult() {
 
     document.getElementById("resultOverlay").className = "";
@@ -160,5 +304,55 @@ function hideResult() {
 }
 
 
+
+// =========================
+// STATUS HELPERS
+// =========================
+
+function updateStatus(message) {
+
+    document.getElementById("status").innerHTML =
+        message;
+
+}
+
+
+
+function setConnectionStatus(connected) {
+
+    const container =
+        document.getElementById("connectionStatus");
+
+    const text =
+        document.getElementById("connectionText");
+
+
+    if (connected) {
+
+        container.className =
+            "connection-status connected";
+
+        text.innerHTML =
+            "Connected";
+
+    }
+
+    else {
+
+        container.className =
+            "connection-status error";
+
+        text.innerHTML =
+            "Connection Error";
+
+    }
+
+}
+
+
+
+// =========================
+// START APP
+// =========================
 
 startScanner();
