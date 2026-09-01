@@ -1,1 +1,70 @@
-EventFlow frontend
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Birthday Check-In</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+    <div class="header">
+
+        <h1>✨ Birthday Celebration ✨</h1>
+
+        <p>VIP Guest Check-In</p>
+
+    </div>
+
+
+    <div class="scanner-card">
+
+        <div id="reader"></div>
+
+    </div>
+
+
+    <div id="status">
+
+        Ready to scan...
+
+    </div>
+
+
+</div>
+
+
+<!-- Full Screen Result -->
+
+<div id="resultOverlay">
+
+    <div id="resultBox">
+
+        <h1 id="resultTitle"></h1>
+
+        <p id="resultName"></p>
+
+
+    </div>
+
+</div>
+
+
+
+<script src="scanner.js"></script>
+
+
+</body>
+
+</html>
