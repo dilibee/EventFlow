@@ -13,34 +13,48 @@
 
 </head>
 
-
 <body>
 
-<div class="page">
+<div class="app">
+
+    <header class="header">
+
+        <div class="brand">
+            EventFlow
+        </div>
+
+        <h1>Event Check-In</h1>
+
+        <p>
+            Scan a guest's ticket to check them in.
+        </p>
+
+    </header>
 
 
-    <div class="header">
+    <main>
 
-        <h1>EventFlow</h1>
+        <div class="scanner-card">
 
-        <p>Event Check-In</p>
+            <div id="reader"></div>
 
-    </div>
-
-
-    <div class="scanner-card">
-
-        <div id="reader"></div>
-
-    </div>
+        </div>
 
 
-    <div id="status">
+        <div id="status">
+            Ready to scan...
+        </div>
 
-        Ready to scan...
+    </main>
 
-    </div>
 
+    <footer>
+
+        <span class="status-dot"></span>
+
+        System Online
+
+    </footer>
 
 </div>
 
@@ -61,7 +75,6 @@
 
 
 <script src="scanner.js"></script>
-
 
 </body>
 
