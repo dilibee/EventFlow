@@ -33,7 +33,7 @@ function startScanner() {
         },
 
         () => {
-            // Ignore scan errors
+            // Ignore scan errors while camera searches for a QR code
         }
 
     )
@@ -42,7 +42,7 @@ function startScanner() {
         console.log(error);
 
         document.getElementById("status").innerHTML =
-        "Camera failed";
+            "Camera failed to start.";
 
     });
 
@@ -50,13 +50,11 @@ function startScanner() {
 
 
 
-// Check ticket
+// Send ticket ID to EventFlow backend
 function checkTicket(ticketID) {
 
-
     document.getElementById("status").innerHTML =
-    "🔎 Checking ticket...";
-
+        "Checking ticket...";
 
     fetch(API_URL + "?id=" + encodeURIComponent(ticketID))
 
@@ -64,91 +62,70 @@ function checkTicket(ticketID) {
 
     .then(data => {
 
-
         if (data.success) {
-
 
             showResult(
                 true,
-                "✅ APPROVED",
-                data.name,
-                ""
+                "APPROVED",
+                data.name
             );
 
-
-            if(navigator.vibrate){
+            if (navigator.vibrate) {
                 navigator.vibrate(200);
             }
 
-
-        } 
-        
-        else {
-
+        } else {
 
             showResult(
                 false,
-                "❌ DENIED",
-                data.message,
-                data.name || ""
+                "DENIED",
+                data.message
             );
 
-
-            if(navigator.vibrate){
-                navigator.vibrate([200,100,200]);
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
             }
 
         }
 
 
-
         setTimeout(() => {
-
 
             hideResult();
 
-
             document.getElementById("status").innerHTML =
-            "Ready to scan...";
-
+                "Ready to scan...";
 
             processing = false;
 
-
             html5QrCode.resume();
 
-
-        },1500);
-
-
+        }, 1500);
 
     })
 
-
     .catch(error => {
-
 
         console.log(error);
 
-
         showResult(
             false,
-            "❌ ERROR",
-            "Database connection failed",
-            ""
+            "ERROR",
+            "Unable to connect to EventFlow."
         );
 
-
-        setTimeout(()=>{
+        setTimeout(() => {
 
             hideResult();
 
-            processing=false;
+            document.getElementById("status").innerHTML =
+                "Ready to scan...";
+
+            processing = false;
 
             html5QrCode.resume();
 
-        },1500);
-
+        }, 1500);
 
     });
 
@@ -156,31 +133,29 @@ function checkTicket(ticketID) {
 
 
 
-// Full screen result
-function showResult(success,title,name,guests){
+// Show full-screen scan result
+function showResult(success, title, message) {
 
-
-    let overlay =
-    document.getElementById("resultOverlay");
-
+    const overlay =
+        document.getElementById("resultOverlay");
 
     overlay.className =
-    success ? "approvedScreen" : "deniedScreen";
-
+        success ? "approvedScreen" : "deniedScreen";
 
     document.getElementById("resultTitle").innerHTML =
-    title;
-
+        title;
 
     document.getElementById("resultName").innerHTML =
-    name;
+        message;
+
 }
 
 
 
-function hideResult(){
+// Hide result screen
+function hideResult() {
 
-    document.getElementById("resultOverlay").className="";
+    document.getElementById("resultOverlay").className = "";
 
 }
 
