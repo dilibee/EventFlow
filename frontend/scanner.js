@@ -89,6 +89,7 @@ function checkTicket(ticketID) {
 
         setConnectionStatus(true);
 
+
         if (data.success) {
 
             showSuccessResult(
@@ -117,6 +118,7 @@ function checkTicket(ticketID) {
 
         }
 
+
         resetScannerAfterDelay();
 
     })
@@ -137,25 +139,30 @@ function checkTicket(ticketID) {
 
 
 // =========================
-// GUEST SEARCH
+// SEARCH GUESTS
 // =========================
 
 function searchGuests() {
 
     const input =
-        document.getElementById("guestSearchInput");
+        document.getElementById(
+            "guestSearchInput"
+        );
 
     const query =
         input.value.trim();
 
     const status =
-        document.getElementById("searchStatus");
+        document.getElementById(
+            "searchStatus"
+        );
 
     const resultsContainer =
-        document.getElementById("searchResults");
+        document.getElementById(
+            "searchResults"
+        );
 
 
-    // Clear old results
     resultsContainer.innerHTML = "";
 
 
@@ -182,7 +189,9 @@ function searchGuests() {
     .then(response => {
 
         if (!response.ok) {
-            throw new Error("Search request failed");
+            throw new Error(
+                "Search request failed"
+            );
         }
 
         return response.json();
@@ -233,10 +242,14 @@ function searchGuests() {
 function displaySearchResults(results) {
 
     const status =
-        document.getElementById("searchStatus");
+        document.getElementById(
+            "searchStatus"
+        );
 
     const container =
-        document.getElementById("searchResults");
+        document.getElementById(
+            "searchResults"
+        );
 
 
     container.innerHTML = "";
@@ -255,7 +268,8 @@ function displaySearchResults(results) {
     status.textContent =
         results.length === 1
             ? "1 guest found."
-            : results.length + " guests found.";
+            : results.length +
+              " guests found.";
 
 
     results.forEach(guest => {
@@ -267,7 +281,10 @@ function displaySearchResults(results) {
             "guest-result-card";
 
 
-        // Guest name
+        // -------------------------
+        // Guest Name
+        // -------------------------
+
         const name =
             document.createElement("h3");
 
@@ -278,7 +295,10 @@ function displaySearchResults(results) {
             guest.name;
 
 
-        // Party size
+        // -------------------------
+        // Party Size
+        // -------------------------
+
         const party =
             document.createElement("div");
 
@@ -286,10 +306,14 @@ function displaySearchResults(results) {
             "guest-result-info";
 
         party.textContent =
-            "Party of " + guest.partySize;
+            "Party of " +
+            guest.partySize;
 
 
+        // -------------------------
         // Ticket ID
+        // -------------------------
+
         const ticket =
             document.createElement("div");
 
@@ -297,10 +321,14 @@ function displaySearchResults(results) {
             "guest-result-info";
 
         ticket.textContent =
-            "Ticket ID: " + guest.ticketID;
+            "Ticket ID: " +
+            guest.ticketID;
 
 
+        // -------------------------
         // Status
+        // -------------------------
+
         const guestStatus =
             document.createElement("div");
 
@@ -313,7 +341,8 @@ function displaySearchResults(results) {
             guestStatus.textContent =
                 "✓ Already Checked In";
 
-        } else {
+        }
+        else {
 
             guestStatus.textContent =
                 "Not Checked In";
@@ -321,19 +350,161 @@ function displaySearchResults(results) {
         }
 
 
+        // -------------------------
+        // Check-In Button
+        // -------------------------
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "manual-checkin-button";
+
+
+        if (guest.checkedIn) {
+
+            button.textContent =
+                "Already Checked In";
+
+            button.disabled = true;
+
+        }
+        else {
+
+            button.textContent =
+                "Check In";
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    manualCheckIn(
+                        guest,
+                        button
+                    );
+
+                }
+            );
+
+        }
+
+
+        // Add everything to card
+
         card.appendChild(name);
         card.appendChild(party);
         card.appendChild(ticket);
         card.appendChild(guestStatus);
-
-
-        /*
-          Manual Check-In button
-          gets added in the NEXT step.
-        */
+        card.appendChild(button);
 
 
         container.appendChild(card);
+
+    });
+
+}
+
+
+// =========================
+// MANUAL CHECK-IN
+// =========================
+
+function manualCheckIn(
+    guest,
+    button
+) {
+
+    if (processing) return;
+
+    processing = true;
+
+
+    button.disabled = true;
+    button.textContent =
+        "Checking In...";
+
+
+    const status =
+        document.getElementById(
+            "searchStatus"
+        );
+
+    status.textContent =
+        "Checking in " +
+        guest.name +
+        "...";
+
+
+    fetch(
+        API_URL +
+        "?action=manual-checkin&id=" +
+        encodeURIComponent(
+            guest.ticketID
+        )
+    )
+
+    .then(response => {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Manual check-in request failed"
+            );
+
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        setConnectionStatus(true);
+
+
+        if (data.success) {
+
+            showSuccessResult(
+                guest.ticketID,
+                data.name,
+                data.partySize
+            );
+
+        }
+
+        else if (
+            data.message ===
+            "Already Checked In"
+        ) {
+
+            showDuplicateResult(
+                data.name
+            );
+
+        }
+
+        else {
+
+            showInvalidResult(
+                data.message
+            );
+
+        }
+
+
+        resetManualCheckInAfterDelay();
+
+    })
+
+    .catch(error => {
+
+        console.log(error);
+
+        setConnectionStatus(false);
+
+        showConnectionError();
+
+        resetManualCheckInAfterDelay();
 
     });
 
@@ -362,7 +533,8 @@ function showSuccessResult(
 
     document.getElementById(
         "resultIcon"
-    ).textContent = "✓";
+    ).textContent =
+        "✓";
 
 
     document.getElementById(
@@ -374,7 +546,8 @@ function showSuccessResult(
     document.getElementById(
         "resultTicket"
     ).textContent =
-        "Ticket ID: " + ticketID;
+        "Ticket ID: " +
+        ticketID;
 
 
     document.getElementById(
@@ -386,7 +559,8 @@ function showSuccessResult(
     document.getElementById(
         "resultDetails"
     ).textContent =
-        "Party Size: " + partySize;
+        "Party Size: " +
+        partySize;
 
 }
 
@@ -409,7 +583,8 @@ function showDuplicateResult(name) {
 
     document.getElementById(
         "resultIcon"
-    ).textContent = "!";
+    ).textContent =
+        "!";
 
 
     document.getElementById(
@@ -456,7 +631,8 @@ function showInvalidResult(message) {
 
     document.getElementById(
         "resultIcon"
-    ).textContent = "×";
+    ).textContent =
+        "×";
 
 
     document.getElementById(
@@ -474,7 +650,8 @@ function showInvalidResult(message) {
     document.getElementById(
         "resultName"
     ).textContent =
-        message || "Guest Not Found";
+        message ||
+        "Guest Not Found";
 
 
     document.getElementById(
@@ -503,7 +680,8 @@ function showConnectionError() {
 
     document.getElementById(
         "resultIcon"
-    ).textContent = "!";
+    ).textContent =
+        "!";
 
 
     document.getElementById(
@@ -533,7 +711,7 @@ function showConnectionError() {
 
 
 // =========================
-// RESET SCANNER
+// RESET QR SCANNER
 // =========================
 
 function resetScannerAfterDelay() {
@@ -572,11 +750,42 @@ function resetScannerAfterDelay() {
 }
 
 
+// =========================
+// RESET MANUAL CHECK-IN
+// =========================
+
+function resetManualCheckInAfterDelay() {
+
+    setTimeout(() => {
+
+        hideResult();
+
+        processing = false;
+
+
+        // Refresh current search so the
+        // guest immediately shows as checked in
+        if (currentView === "search") {
+
+            searchGuests();
+
+        }
+
+    }, 2000);
+
+}
+
+
+// =========================
+// HIDE RESULT
+// =========================
+
 function hideResult() {
 
     document.getElementById(
         "resultOverlay"
-    ).className = "";
+    ).className =
+        "";
 
 }
 
@@ -639,27 +848,44 @@ function setConnectionStatus(
 
 function showScanView() {
 
-    currentView = "scan";
+    currentView =
+        "scan";
 
 
     document
-        .getElementById("scanView")
-        .classList.add("active-view");
+        .getElementById(
+            "scanView"
+        )
+        .classList.add(
+            "active-view"
+        );
 
 
     document
-        .getElementById("searchView")
-        .classList.remove("active-view");
+        .getElementById(
+            "searchView"
+        )
+        .classList.remove(
+            "active-view"
+        );
 
 
     document
-        .getElementById("scanNav")
-        .classList.add("active");
+        .getElementById(
+            "scanNav"
+        )
+        .classList.add(
+            "active"
+        );
 
 
     document
-        .getElementById("searchNav")
-        .classList.remove("active");
+        .getElementById(
+            "searchNav"
+        )
+        .classList.remove(
+            "active"
+        );
 
 
     if (
@@ -685,27 +911,44 @@ function showScanView() {
 
 function showSearchView() {
 
-    currentView = "search";
+    currentView =
+        "search";
 
 
     document
-        .getElementById("searchView")
-        .classList.add("active-view");
+        .getElementById(
+            "searchView"
+        )
+        .classList.add(
+            "active-view"
+        );
 
 
     document
-        .getElementById("scanView")
-        .classList.remove("active-view");
+        .getElementById(
+            "scanView"
+        )
+        .classList.remove(
+            "active-view"
+        );
 
 
     document
-        .getElementById("searchNav")
-        .classList.add("active");
+        .getElementById(
+            "searchNav"
+        )
+        .classList.add(
+            "active"
+        );
 
 
     document
-        .getElementById("scanNav")
-        .classList.remove("active");
+        .getElementById(
+            "scanNav"
+        )
+        .classList.remove(
+            "active"
+        );
 
 
     if (
@@ -727,7 +970,6 @@ function showSearchView() {
     }
 
 
-    // Put cursor into search box
     setTimeout(() => {
 
         document
@@ -746,7 +988,9 @@ function showSearchView() {
 // =========================
 
 document
-    .getElementById("scanNav")
+    .getElementById(
+        "scanNav"
+    )
     .addEventListener(
         "click",
         showScanView
@@ -754,7 +998,9 @@ document
 
 
 document
-    .getElementById("searchNav")
+    .getElementById(
+        "searchNav"
+    )
     .addEventListener(
         "click",
         showSearchView
@@ -771,7 +1017,6 @@ document
     );
 
 
-// Pressing Enter also searches
 document
     .getElementById(
         "guestSearchInput"
@@ -780,7 +1025,9 @@ document
         "keydown",
         event => {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
 
                 searchGuests();
 
@@ -788,13 +1035,6 @@ document
 
         }
     );
-
-
-// =========================
-// START APP
-// =========================
-
-startScanner();
 
 
 // =========================
