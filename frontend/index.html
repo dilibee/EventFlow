@@ -32,47 +32,107 @@
             Event Check-In
         </h2>
 
-        <p class="instructions">
-            Position the QR code inside the frame.
-        </p>
-
     </header>
 
 
 
-    <!-- Scanner -->
-    <main class="scanner-section">
+    <!-- =========================
+         SCAN VIEW
+         ========================= -->
 
-        <div class="scanner-card">
+    <main id="scanView" class="view active-view">
 
-            <div class="scanner-frame">
+        <p class="instructions">
+            Position the QR code inside the frame.
+        </p>
 
-                <!-- Animated corner decorations -->
-                <span class="corner top-left"></span>
-                <span class="corner top-right"></span>
-                <span class="corner bottom-left"></span>
-                <span class="corner bottom-right"></span>
 
-                <div id="reader"></div>
+        <div class="scanner-section">
+
+            <div class="scanner-card">
+
+                <div class="scanner-frame">
+
+                    <span class="corner top-left"></span>
+                    <span class="corner top-right"></span>
+                    <span class="corner bottom-left"></span>
+                    <span class="corner bottom-right"></span>
+
+                    <div id="reader"></div>
+
+                </div>
+
+            </div>
+
+
+            <div id="status">
+                Starting camera...
+            </div>
+
+
+            <div
+                id="connectionStatus"
+                class="connection-status"
+            >
+
+                <span class="connection-dot"></span>
+
+                <span id="connectionText">
+                    Connecting...
+                </span>
 
             </div>
 
         </div>
 
-
-        <!-- Camera / API Status -->
-        <div id="status">
-            Starting camera...
-        </div>
+    </main>
 
 
-        <div id="connectionStatus" class="connection-status">
 
-            <span class="connection-dot"></span>
+    <!-- =========================
+         SEARCH VIEW
+         ========================= -->
 
-            <span id="connectionText">
-                Connecting...
-            </span>
+    <main id="searchView" class="view">
+
+        <div class="search-container">
+
+            <h2>
+                Search Guest
+            </h2>
+
+            <p class="search-description">
+                Find a guest by name and check them in manually.
+            </p>
+
+
+            <div class="search-box">
+
+                <input
+                    type="text"
+                    id="guestSearchInput"
+                    placeholder="Enter guest name..."
+                    autocomplete="off"
+                >
+
+                <button
+                    id="guestSearchButton"
+                    type="button"
+                >
+                    Search
+                </button>
+
+            </div>
+
+
+            <div id="searchStatus"></div>
+
+
+            <div id="searchResults">
+
+                <!-- Search results will appear here later -->
+
+            </div>
 
         </div>
 
@@ -109,7 +169,10 @@
 
 
 
-<!-- Result Overlay -->
+<!-- =========================
+     RESULT OVERLAY
+     ========================= -->
+
 <div id="resultOverlay">
 
     <div id="resultCard">
@@ -130,7 +193,7 @@
 
 
 
-<script src="scanner.js?v=3"></script>
+<script src="scanner.js?v=4"></script>
 
 </body>
 
