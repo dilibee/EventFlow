@@ -46,7 +46,6 @@ function startScanner() {
     .then(() => {
 
         updateStatus("Ready to scan...");
-
         setConnectionStatus(true);
 
     })
@@ -55,7 +54,6 @@ function startScanner() {
         console.log(error);
 
         updateStatus("Camera failed to start.");
-
         setConnectionStatus(false);
 
     });
@@ -63,9 +61,8 @@ function startScanner() {
 }
 
 
-
 // =========================
-// CHECK TICKET
+// QR CHECK-IN
 // =========================
 
 function checkTicket(ticketID) {
@@ -92,8 +89,6 @@ function checkTicket(ticketID) {
 
         setConnectionStatus(true);
 
-
-        // VALID TICKET
         if (data.success) {
 
             showSuccessResult(
@@ -104,8 +99,6 @@ function checkTicket(ticketID) {
 
         }
 
-
-        // DUPLICATE TICKET
         else if (
             data.message === "Already Checked In"
         ) {
@@ -116,8 +109,6 @@ function checkTicket(ticketID) {
 
         }
 
-
-        // INVALID TICKET
         else {
 
             showInvalidResult(
@@ -125,7 +116,6 @@ function checkTicket(ticketID) {
             );
 
         }
-
 
         resetScannerAfterDelay();
 
@@ -146,6 +136,209 @@ function checkTicket(ticketID) {
 }
 
 
+// =========================
+// GUEST SEARCH
+// =========================
+
+function searchGuests() {
+
+    const input =
+        document.getElementById("guestSearchInput");
+
+    const query =
+        input.value.trim();
+
+    const status =
+        document.getElementById("searchStatus");
+
+    const resultsContainer =
+        document.getElementById("searchResults");
+
+
+    // Clear old results
+    resultsContainer.innerHTML = "";
+
+
+    if (!query) {
+
+        status.textContent =
+            "Enter a guest name to search.";
+
+        return;
+
+    }
+
+
+    status.textContent =
+        "Searching...";
+
+
+    fetch(
+        API_URL +
+        "?action=search&q=" +
+        encodeURIComponent(query)
+    )
+
+    .then(response => {
+
+        if (!response.ok) {
+            throw new Error("Search request failed");
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        setConnectionStatus(true);
+
+
+        if (
+            !data.success ||
+            !data.results
+        ) {
+
+            throw new Error(
+                "Invalid search response"
+            );
+
+        }
+
+
+        displaySearchResults(
+            data.results
+        );
+
+    })
+
+    .catch(error => {
+
+        console.log(error);
+
+        setConnectionStatus(false);
+
+        status.textContent =
+            "Unable to search EventFlow.";
+
+    });
+
+}
+
+
+// =========================
+// DISPLAY SEARCH RESULTS
+// =========================
+
+function displaySearchResults(results) {
+
+    const status =
+        document.getElementById("searchStatus");
+
+    const container =
+        document.getElementById("searchResults");
+
+
+    container.innerHTML = "";
+
+
+    if (results.length === 0) {
+
+        status.textContent =
+            "No guests found.";
+
+        return;
+
+    }
+
+
+    status.textContent =
+        results.length === 1
+            ? "1 guest found."
+            : results.length + " guests found.";
+
+
+    results.forEach(guest => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "guest-result-card";
+
+
+        // Guest name
+        const name =
+            document.createElement("h3");
+
+        name.className =
+            "guest-result-name";
+
+        name.textContent =
+            guest.name;
+
+
+        // Party size
+        const party =
+            document.createElement("div");
+
+        party.className =
+            "guest-result-info";
+
+        party.textContent =
+            "Party of " + guest.partySize;
+
+
+        // Ticket ID
+        const ticket =
+            document.createElement("div");
+
+        ticket.className =
+            "guest-result-info";
+
+        ticket.textContent =
+            "Ticket ID: " + guest.ticketID;
+
+
+        // Status
+        const guestStatus =
+            document.createElement("div");
+
+        guestStatus.className =
+            "guest-result-info";
+
+
+        if (guest.checkedIn) {
+
+            guestStatus.textContent =
+                "✓ Already Checked In";
+
+        } else {
+
+            guestStatus.textContent =
+                "Not Checked In";
+
+        }
+
+
+        card.appendChild(name);
+        card.appendChild(party);
+        card.appendChild(ticket);
+        card.appendChild(guestStatus);
+
+
+        /*
+          Manual Check-In button
+          gets added in the NEXT step.
+        */
+
+
+        container.appendChild(card);
+
+    });
+
+}
+
 
 // =========================
 // SUCCESS RESULT
@@ -158,7 +351,9 @@ function showSuccessResult(
 ) {
 
     const overlay =
-        document.getElementById("resultOverlay");
+        document.getElementById(
+            "resultOverlay"
+        );
 
 
     overlay.className =
@@ -167,34 +362,33 @@ function showSuccessResult(
 
     document.getElementById(
         "resultIcon"
-    ).innerHTML = "✓";
+    ).textContent = "✓";
 
 
     document.getElementById(
         "resultTitle"
-    ).innerHTML =
+    ).textContent =
         "CHECK-IN COMPLETE";
 
 
     document.getElementById(
         "resultTicket"
-    ).innerHTML =
+    ).textContent =
         "Ticket ID: " + ticketID;
 
 
     document.getElementById(
         "resultName"
-    ).innerHTML =
+    ).textContent =
         name;
 
 
     document.getElementById(
         "resultDetails"
-    ).innerHTML =
+    ).textContent =
         "Party Size: " + partySize;
 
 }
-
 
 
 // =========================
@@ -204,7 +398,9 @@ function showSuccessResult(
 function showDuplicateResult(name) {
 
     const overlay =
-        document.getElementById("resultOverlay");
+        document.getElementById(
+            "resultOverlay"
+        );
 
 
     overlay.className =
@@ -213,34 +409,33 @@ function showDuplicateResult(name) {
 
     document.getElementById(
         "resultIcon"
-    ).innerHTML = "!";
+    ).textContent = "!";
 
 
     document.getElementById(
         "resultTitle"
-    ).innerHTML =
+    ).textContent =
         "ALREADY CHECKED IN";
 
 
     document.getElementById(
         "resultTicket"
-    ).innerHTML =
+    ).textContent =
         "";
 
 
     document.getElementById(
         "resultName"
-    ).innerHTML =
+    ).textContent =
         name;
 
 
     document.getElementById(
         "resultDetails"
-    ).innerHTML =
+    ).textContent =
         "No action required.";
 
 }
-
 
 
 // =========================
@@ -250,7 +445,9 @@ function showDuplicateResult(name) {
 function showInvalidResult(message) {
 
     const overlay =
-        document.getElementById("resultOverlay");
+        document.getElementById(
+            "resultOverlay"
+        );
 
 
     overlay.className =
@@ -259,34 +456,33 @@ function showInvalidResult(message) {
 
     document.getElementById(
         "resultIcon"
-    ).innerHTML = "×";
+    ).textContent = "×";
 
 
     document.getElementById(
         "resultTitle"
-    ).innerHTML =
+    ).textContent =
         "INVALID TICKET";
 
 
     document.getElementById(
         "resultTicket"
-    ).innerHTML =
+    ).textContent =
         "";
 
 
     document.getElementById(
         "resultName"
-    ).innerHTML =
+    ).textContent =
         message || "Guest Not Found";
 
 
     document.getElementById(
         "resultDetails"
-    ).innerHTML =
+    ).textContent =
         "Please verify the ticket and try again.";
 
 }
-
 
 
 // =========================
@@ -296,7 +492,9 @@ function showInvalidResult(message) {
 function showConnectionError() {
 
     const overlay =
-        document.getElementById("resultOverlay");
+        document.getElementById(
+            "resultOverlay"
+        );
 
 
     overlay.className =
@@ -305,34 +503,33 @@ function showConnectionError() {
 
     document.getElementById(
         "resultIcon"
-    ).innerHTML = "!";
+    ).textContent = "!";
 
 
     document.getElementById(
         "resultTitle"
-    ).innerHTML =
+    ).textContent =
         "CONNECTION ERROR";
 
 
     document.getElementById(
         "resultTicket"
-    ).innerHTML =
+    ).textContent =
         "";
 
 
     document.getElementById(
         "resultName"
-    ).innerHTML =
+    ).textContent =
         "Unable to reach EventFlow.";
 
 
     document.getElementById(
         "resultDetails"
-    ).innerHTML =
+    ).textContent =
         "Check your connection and try again.";
 
 }
-
 
 
 // =========================
@@ -361,7 +558,8 @@ function resetScannerAfterDelay() {
 
                 html5QrCode.resume();
 
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.log(error);
 
@@ -374,7 +572,6 @@ function resetScannerAfterDelay() {
 }
 
 
-
 function hideResult() {
 
     document.getElementById(
@@ -382,7 +579,6 @@ function hideResult() {
     ).className = "";
 
 }
-
 
 
 // =========================
@@ -393,11 +589,10 @@ function updateStatus(message) {
 
     document.getElementById(
         "status"
-    ).innerHTML =
+    ).textContent =
         message;
 
 }
-
 
 
 function setConnectionStatus(
@@ -420,7 +615,7 @@ function setConnectionStatus(
         container.className =
             "connection-status connected";
 
-        text.innerHTML =
+        text.textContent =
             "Connected";
 
     }
@@ -430,13 +625,12 @@ function setConnectionStatus(
         container.className =
             "connection-status error";
 
-        text.innerHTML =
+        text.textContent =
             "Connection Error";
 
     }
 
 }
-
 
 
 // =========================
@@ -468,8 +662,6 @@ function showScanView() {
         .classList.remove("active");
 
 
-    // Resume scanner when returning
-    // to the Scan tab
     if (
         html5QrCode &&
         !processing
@@ -479,7 +671,8 @@ function showScanView() {
 
             html5QrCode.resume();
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.log(error);
 
@@ -488,7 +681,6 @@ function showScanView() {
     }
 
 }
-
 
 
 function showSearchView() {
@@ -516,7 +708,6 @@ function showSearchView() {
         .classList.remove("active");
 
 
-    // Pause scanner while using Search
     if (
         html5QrCode &&
         !processing
@@ -526,7 +717,8 @@ function showSearchView() {
 
             html5QrCode.pause(true);
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.log(error);
 
@@ -534,12 +726,23 @@ function showSearchView() {
 
     }
 
+
+    // Put cursor into search box
+    setTimeout(() => {
+
+        document
+            .getElementById(
+                "guestSearchInput"
+            )
+            .focus();
+
+    }, 100);
+
 }
 
 
-
 // =========================
-// NAV BUTTON EVENTS
+// BUTTON EVENTS
 // =========================
 
 document
@@ -557,6 +760,41 @@ document
         showSearchView
     );
 
+
+document
+    .getElementById(
+        "guestSearchButton"
+    )
+    .addEventListener(
+        "click",
+        searchGuests
+    );
+
+
+// Pressing Enter also searches
+document
+    .getElementById(
+        "guestSearchInput"
+    )
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+
+                searchGuests();
+
+            }
+
+        }
+    );
+
+
+// =========================
+// START APP
+// =========================
+
+startScanner();
 
 
 // =========================
