@@ -1,7 +1,8 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbw1i4OOsleUchpFMur7gAz6uSXIT_86o4BCeM2Zqgzq095UwKSNHf2JBa6b751W7Q1J/exec";
+const API_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
 
 let html5QrCode;
 let processing = false;
+let currentView = "scan";
 
 
 // =========================
@@ -157,9 +158,7 @@ function showSuccessResult(
 ) {
 
     const overlay =
-        document.getElementById(
-            "resultOverlay"
-        );
+        document.getElementById("resultOverlay");
 
 
     overlay.className =
@@ -205,9 +204,7 @@ function showSuccessResult(
 function showDuplicateResult(name) {
 
     const overlay =
-        document.getElementById(
-            "resultOverlay"
-        );
+        document.getElementById("resultOverlay");
 
 
     overlay.className =
@@ -253,9 +250,7 @@ function showDuplicateResult(name) {
 function showInvalidResult(message) {
 
     const overlay =
-        document.getElementById(
-            "resultOverlay"
-        );
+        document.getElementById("resultOverlay");
 
 
     overlay.className =
@@ -301,9 +296,7 @@ function showInvalidResult(message) {
 function showConnectionError() {
 
     const overlay =
-        document.getElementById(
-            "resultOverlay"
-        );
+        document.getElementById("resultOverlay");
 
 
     overlay.className =
@@ -358,7 +351,23 @@ function resetScannerAfterDelay() {
 
         processing = false;
 
-        html5QrCode.resume();
+
+        if (
+            currentView === "scan" &&
+            html5QrCode
+        ) {
+
+            try {
+
+                html5QrCode.resume();
+
+            } catch (error) {
+
+                console.log(error);
+
+            }
+
+        }
 
     }, 2000);
 
@@ -427,6 +436,126 @@ function setConnectionStatus(
     }
 
 }
+
+
+
+// =========================
+// NAVIGATION
+// =========================
+
+function showScanView() {
+
+    currentView = "scan";
+
+
+    document
+        .getElementById("scanView")
+        .classList.add("active-view");
+
+
+    document
+        .getElementById("searchView")
+        .classList.remove("active-view");
+
+
+    document
+        .getElementById("scanNav")
+        .classList.add("active");
+
+
+    document
+        .getElementById("searchNav")
+        .classList.remove("active");
+
+
+    // Resume scanner when returning
+    // to the Scan tab
+    if (
+        html5QrCode &&
+        !processing
+    ) {
+
+        try {
+
+            html5QrCode.resume();
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    }
+
+}
+
+
+
+function showSearchView() {
+
+    currentView = "search";
+
+
+    document
+        .getElementById("searchView")
+        .classList.add("active-view");
+
+
+    document
+        .getElementById("scanView")
+        .classList.remove("active-view");
+
+
+    document
+        .getElementById("searchNav")
+        .classList.add("active");
+
+
+    document
+        .getElementById("scanNav")
+        .classList.remove("active");
+
+
+    // Pause scanner while using Search
+    if (
+        html5QrCode &&
+        !processing
+    ) {
+
+        try {
+
+            html5QrCode.pause(true);
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+    }
+
+}
+
+
+
+// =========================
+// NAV BUTTON EVENTS
+// =========================
+
+document
+    .getElementById("scanNav")
+    .addEventListener(
+        "click",
+        showScanView
+    );
+
+
+document
+    .getElementById("searchNav")
+    .addEventListener(
+        "click",
+        showSearchView
+    );
 
 
 
