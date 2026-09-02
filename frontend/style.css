@@ -1,271 +1,184 @@
 /* =========================
-   EVENTFLOW SCANNER STYLES
+   VIEW SWITCHING
    ========================= */
 
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    min-height: 100vh;
-
-    background: #eef2f7;
-    color: #172033;
-
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-
-/* =========================
-   MAIN APP
-   ========================= */
-
-.app {
-    min-height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-
-    padding: 24px 18px 100px;
-}
-
-
-/* =========================
-   HEADER / BRANDING
-   ========================= */
-
-.top-header {
-    text-align: center;
-
+.view {
+    display: none;
     width: 100%;
-    max-width: 520px;
-
-    margin: 0 auto 24px;
 }
 
-
-.brand-box {
-    display: inline-block;
-
-    background: #2563eb;
-    color: white;
-
-    border: 3px solid #60a5fa;
-    border-radius: 12px;
-
-    padding: 10px 24px;
-
-    font-size: 18px;
-    font-weight: 700;
-
-    letter-spacing: 4px;
-
-    margin-bottom: 22px;
-
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
-}
-
-
-#eventTitle {
-    margin: 0;
-
-    font-size: 28px;
-    font-weight: 700;
-
-    color: #172033;
-}
-
-
-.top-header h2 {
-    margin: 6px 0 0;
-
-    font-size: 18px;
-    font-weight: 500;
-
-    color: #64748b;
-}
-
-
-.instructions {
-    margin: 18px 0 0;
-
-    color: #64748b;
-
-    font-size: 15px;
+.view.active-view {
+    display: block;
 }
 
 
 /* =========================
-   SCANNER AREA
+   SEARCH VIEW
    ========================= */
 
-.scanner-section {
+.search-container {
     width: 100%;
     max-width: 520px;
 
     margin: 0 auto;
 
-    flex: 1;
-}
-
-
-.scanner-card {
     background: white;
 
     border: 1px solid #d7deea;
     border-radius: 24px;
 
-    padding: 14px;
+    padding: 28px 24px;
 
     box-shadow:
         0 10px 30px rgba(15, 23, 42, 0.08);
 }
 
 
-/* Actual scanner container */
+.search-container h2 {
+    margin: 0;
 
-.scanner-frame {
-    position: relative;
+    color: #172033;
+
+    font-size: 26px;
+}
+
+
+.search-description {
+    margin: 8px 0 24px;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    line-height: 1.5;
+}
+
+
+/* SEARCH INPUT + BUTTON */
+
+.search-box {
+    display: flex;
+
+    gap: 10px;
 
     width: 100%;
-
-    overflow: hidden;
-
-    border-radius: 18px;
-
-    background: #111827;
 }
 
 
-#reader {
-    width: 100%;
+#guestSearchInput {
+    flex: 1;
 
-    border: none !important;
+    min-width: 0;
+
+    padding: 14px 16px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    color: #172033;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
-/* Remove some default html5-qrcode borders */
-
-#reader video {
-    border-radius: 18px;
-}
-
-
-/* =========================
-   SCANNER CORNERS
-   ========================= */
-
-.corner {
-    position: absolute;
-
-    width: 38px;
-    height: 38px;
-
-    z-index: 10;
-
-    pointer-events: none;
-
+#guestSearchInput:focus {
     border-color: #3b82f6;
+
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.15);
+
+    background: white;
 }
 
 
-.top-left {
-    top: 18px;
-    left: 18px;
+#guestSearchButton {
+    border: none;
 
-    border-top: 4px solid #3b82f6;
-    border-left: 4px solid #3b82f6;
+    background: #2563eb;
 
-    border-radius: 8px 0 0 0;
+    color: white;
+
+    padding: 14px 20px;
+
+    border-radius: 12px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease;
 }
 
 
-.top-right {
-    top: 18px;
-    right: 18px;
-
-    border-top: 4px solid #3b82f6;
-    border-right: 4px solid #3b82f6;
-
-    border-radius: 0 8px 0 0;
+#guestSearchButton:hover {
+    background: #1d4ed8;
 }
 
 
-.bottom-left {
-    bottom: 18px;
-    left: 18px;
-
-    border-bottom: 4px solid #3b82f6;
-    border-left: 4px solid #3b82f6;
-
-    border-radius: 0 0 0 8px;
+#guestSearchButton:active {
+    transform: scale(0.97);
 }
 
 
-.bottom-right {
-    bottom: 18px;
-    right: 18px;
+/* SEARCH STATUS */
 
-    border-bottom: 4px solid #3b82f6;
-    border-right: 4px solid #3b82f6;
+#searchStatus {
+    min-height: 22px;
 
-    border-radius: 0 0 8px 0;
-}
-
-
-/* Subtle scanner animation */
-
-.corner {
-    animation: scannerPulse 1.8s ease-in-out infinite;
-}
-
-
-@keyframes scannerPulse {
-
-    0% {
-        opacity: 0.55;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0.55;
-    }
-
-}
-
-
-/* =========================
-   CAMERA STATUS
-   ========================= */
-
-#status {
     margin-top: 18px;
 
     text-align: center;
 
     color: #64748b;
 
-    font-size: 15px;
+    font-size: 14px;
 }
 
 
-/* =========================
-   CONNECTION STATUS
-   ========================= */
+/* SEARCH RESULTS */
 
-.connection-status {
-    display: flex;
+#searchResults {
+    margin-top: 18px;
+}
 
-    justify-content: center;
-    align-items: center;
 
-    gap: 7px;
+/* FUTURE RESULT CARD */
 
-    margin-top: 12px;
+.guest-result-card {
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+
+    padding: 18px;
+
+    margin-bottom: 12px;
+}
+
+
+.guest-result-name {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+.guest-result-info {
+    margin-top: 6px;
 
     color: #64748b;
 
@@ -273,309 +186,56 @@ body {
 }
 
 
-.connection-dot {
-    width: 9px;
-    height: 9px;
-
-    border-radius: 50%;
-
-    background: #94a3b8;
-}
-
-
-/* We'll activate this using JavaScript later */
-
-.connection-status.connected .connection-dot {
-    background: #22c55e;
-}
-
-
-.connection-status.error .connection-dot {
-    background: #ef4444;
-}
-
-
-/* =========================
-   BOTTOM NAVIGATION
-   ========================= */
-
-.bottom-nav {
-    position: fixed;
-
-    bottom: 0;
-    left: 0;
-
+.manual-checkin-button {
     width: 100%;
 
-    height: 76px;
+    margin-top: 14px;
 
-    display: flex;
-
-    background: white;
-
-    border-top: 1px solid #dbe2ec;
-
-    box-shadow:
-        0 -4px 20px rgba(15, 23, 42, 0.06);
-
-    z-index: 100;
-}
-
-
-.nav-button {
-    flex: 1;
+    padding: 12px;
 
     border: none;
-    background: transparent;
+    border-radius: 10px;
 
-    color: #94a3b8;
+    background: #2563eb;
 
-    font-size: 13px;
+    color: white;
 
-    display: flex;
-    flex-direction: column;
-
-    justify-content: center;
-    align-items: center;
-
-    gap: 4px;
+    font-size: 15px;
+    font-weight: 600;
 
     cursor: pointer;
 }
 
 
-.nav-icon {
-    font-size: 23px;
-}
-
-
-.nav-button.active {
-    color: #2563eb;
-
-    font-weight: 600;
-}
-
-
-/* =========================
-   RESULT OVERLAY
-   ========================= */
-
-#resultOverlay {
-    position: fixed;
-
-    inset: 0;
-
-    display: none;
-
-    justify-content: center;
-    align-items: center;
-
-    padding: 24px;
-
-    background: rgba(15, 23, 42, 0.72);
-
-    backdrop-filter: blur(8px);
-
-    z-index: 9999;
-}
-
-
-#resultCard {
-    width: 100%;
-    max-width: 420px;
-
-    background: white;
-
-    border-radius: 24px;
-
-    padding: 38px 25px;
-
-    text-align: center;
-
-    box-shadow:
-        0 20px 60px rgba(15, 23, 42, 0.25);
-
-    animation: resultAppear 0.3s ease;
-}
-
-
-@keyframes resultAppear {
-
-    from {
-        opacity: 0;
-        transform: scale(0.92) translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-
-}
-
-
-/* Result icon */
-
-#resultIcon {
-    width: 76px;
-    height: 76px;
-
-    margin: 0 auto 20px;
-
-    border-radius: 50%;
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-
-    font-size: 38px;
-    font-weight: bold;
-}
-
-
-#resultTitle {
-    margin: 0;
-
-    font-size: 25px;
-}
-
-
-#resultTicket {
-    margin: 14px 0 0;
+.manual-checkin-button:disabled {
+    background: #cbd5e1;
 
     color: #64748b;
 
-    font-size: 14px;
-}
-
-
-#resultName {
-    margin: 18px 0 0;
-
-    font-size: 28px;
-
-    color: #172033;
-}
-
-
-#resultDetails {
-    margin: 10px 0 0;
-
-    color: #64748b;
-
-    font-size: 16px;
+    cursor: not-allowed;
 }
 
 
 /* =========================
-   SUCCESS RESULT
-   ========================= */
-
-.approvedScreen {
-    display: flex !important;
-}
-
-
-.approvedScreen #resultCard {
-    border-top: 6px solid #22c55e;
-}
-
-
-.approvedScreen #resultIcon {
-    background: #dcfce7;
-
-    color: #16a34a;
-}
-
-
-/* =========================
-   WARNING RESULT
-   ========================= */
-
-.warningScreen {
-    display: flex !important;
-}
-
-
-.warningScreen #resultCard {
-    border-top: 6px solid #f59e0b;
-}
-
-
-.warningScreen #resultIcon {
-    background: #fef3c7;
-
-    color: #d97706;
-}
-
-
-/* =========================
-   ERROR RESULT
-   ========================= */
-
-.deniedScreen {
-    display: flex !important;
-}
-
-
-.deniedScreen #resultCard {
-    border-top: 6px solid #ef4444;
-}
-
-
-.deniedScreen #resultIcon {
-    background: #fee2e2;
-
-    color: #dc2626;
-}
-
-
-/* =========================
-   MOBILE
+   MOBILE SEARCH
    ========================= */
 
 @media (max-width: 600px) {
 
-    .app {
-        padding:
-            20px
-            14px
-            100px;
-    }
+    .search-container {
+        padding: 22px 16px;
 
-
-    .brand-box {
-        font-size: 16px;
-
-        padding: 9px 20px;
-    }
-
-
-    #eventTitle {
-        font-size: 24px;
-    }
-
-
-    .top-header h2 {
-        font-size: 17px;
-    }
-
-
-    .scanner-card {
         border-radius: 20px;
-
-        padding: 10px;
     }
 
 
-    #resultCard {
-        padding: 32px 20px;
+    .search-box {
+        flex-direction: column;
     }
 
 
-    #resultName {
-        font-size: 25px;
+    #guestSearchButton {
+        width: 100%;
     }
 
 }
