@@ -1,1 +1,7 @@
-Ticket ID,Guest Name,Party Size
+Ticket ID,Guest Name,Party Size,Checked In,Check-In Time
+EVT001,Alex Morgan,2,NO,
+EVT002,Jordan Lee,4,YES,2026-09-02 19:42
+EVT003,Taylor Smith,1,NO,
+EVT004,Casey Brown,3,YES,2026-09-02 19:48
+EVT005,Jamie Chen,2,NO,
+EVT006,Riley Patel,1,YES,2026-09-02 19:53
