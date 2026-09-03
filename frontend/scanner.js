@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbw1i4OOsleUchpFMur7gAz6uSXIT_86o4BCeM2Zqgzq095UwKSNHf2JBa6b751W7Q1J/exec";
+const API_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
 
 let html5QrCode;
 let processing = false;
